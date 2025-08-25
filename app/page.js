@@ -1,103 +1,378 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import Script from "next/script";
+import ContactForm from "../components/ContactForm"; // change to "@/components/ContactForm" only if your jsconfig/tsconfig paths are set
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [fabVisible, setFabVisible] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    const onScroll = () => setFabVisible(window.scrollY > 300);
+    window.addEventListener("scroll", onScroll);
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <>
+      {/* If you already load this in app/layout.js, remove this Script */}
+      <Script
+        src="https://online-booking.housecallpro.com/script.js?token=d4e1ed98b32f451292eb26a710d891f0&orgName=Mikes-Pro-Handyman-service"
+        strategy="afterInteractive"
+      />
+
+      {/* Main */}
+      <main className="mx-auto max-w-4xl space-y-10 px-4 py-10 text-center sm:space-y-12 sm:py-12">
+        {/* Hero */}
+        <section id="home" className="surface-deep p-8 text-white sm:p-10">
+          <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white/90 ring-1 ring-white/15">
+            Mike’s PRO Handyman
+          </p>
+
+          <h1 className="text-3xl font-bold leading-tight drop-shadow sm:text-4xl">
+            Las Vegas Handyman — Fast Online Booking for Home Repairs
+          </h1>
+
+          <p className="mx-auto mt-3 max-w-2xl text-white/90">
+            Licensed, insured handyman for <strong>Las Vegas</strong>, <strong>Henderson</strong> &{" "}
+            <strong>Summerlin</strong>. Electrical, plumbing, drywall, doors & fixtures—done right.{" "}
+            <strong>Book online in under 60 seconds</strong> with real-time availability and instant confirmation.
+          </p>
+
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <button
+              onClick={() => window.HCPWidget?.openModal()}
+              aria-label="Open fast online booking"
+              className="btn btn-primary-glass btn-shine"
+            >
+              📅 Book Online — 60s
+            </button>
+            <a href="tel:+1-702-555-1234" className="btn btn-white-soft">
+              📞 Call Now
+            </a>
+            <a href="#services" className="btn btn-ghost-glass">
+              🛠️ View Services
+            </a>
+          </div>
+
+          <ul className="mt-6 grid grid-cols-1 gap-2 text-sm text-white/90 sm:grid-cols-3">
+            <li className="flex items-center justify-center gap-2">✅ Same-day & next-day availability</li>
+            <li className="flex items-center justify-center gap-2">✅ Transparent pricing & estimates</li>
+            <li className="flex items-center justify-center gap-2">✅ 25+ years — licensed & insured</li>
+          </ul>
+
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs ring-1 ring-white/15">
+            <span className="inline-block rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+              New
+            </span>
+            <span>Faster booking modal • Updated service bundles • Text updates for appointments</span>
+          </div>
+        </section>
+
+        {/* About */}
+        <section id="about" className="scroll-mt-24">
+          <div className="rounded-2xl border border-white/25 bg-gradient-to-br from-sky-200/65 via-blue-100/55 to-white/55 p-8 text-slate-900 ring-1 ring-black/10 backdrop-blur-xl shadow-xl sm:p-10">
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-800 ring-1 ring-blue-200">
+              25+ Years Experience
+            </p>
+
+            <h2 className="mt-2 text-2xl font-bold text-blue-900 sm:text-3xl">About Mike’s PRO Handyman</h2>
+
+            <p className="mt-3 text-slate-800">
+              Licensed, insured handyman with <strong>25+ years across construction and technical trades</strong>—
+              electrical, plumbing, carpentry, and low-voltage/smart-home. Serving Las Vegas, Henderson, and Summerlin
+              with reliable workmanship and friendly service.
+            </p>
+
+            <details className="group mt-4">
+              <summary className="inline-flex cursor-pointer select-none items-center gap-2 rounded-full border border-blue-200 bg-white/90 px-4 py-2 text-sm font-medium text-blue-700 ring-1 ring-blue-200 transition hover:-translate-y-0.5 hover:bg-white">
+                <span className="inline-block">📘 Read More</span>
+                <svg className="h-4 w-4 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path
+                    fillRule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </summary>
+
+              <div className="mt-4 space-y-3 text-slate-800/95">
+                <p>
+                  I combine field experience with modern tools: stud-secure TV mounting, smart thermostats & cameras,
+                  dimmers & GFCIs, faucet/fixture swaps, drywall texture matching, and door/lock alignment.
+                </p>
+                <ul className="list-inside list-disc text-sm">
+                  <li>Residential & light commercial</li>
+                  <li>Clean work, clear communication, on-time arrivals</li>
+                  <li>Upfront estimates and photo updates when requested</li>
+                </ul>
+              </div>
+            </details>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3 font-medium text-white ring-1 ring-blue-300 transition hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow"
+              >
+                📅 Get a Free Estimate
+              </a>
+              <a
+                href="tel:+1-702-555-1234"
+                className="inline-flex items-center justify-center rounded-full border border-blue-200 bg-white px-6 py-3 font-medium text-blue-700 ring-1 ring-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-50"
+              >
+                📞 Call Now
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Specialties */}
+  {/* Specialties */}
+<section id="specialties" className="section scroll-mt-24">
+  <div className="container-md">
+    <div className="surface-deep p-8 sm:p-10 text-white">
+      <p className="badge-glass">Popular Services</p>
+      <h2 className="mt-2 text-2xl sm:text-3xl font-bold">Fixes, Installs & Upgrades — Done Right</h2>
+      <p className="mt-1 text-sm text-white/85">Swipe on mobile, tap to learn more.</p>
+
+      {(() => {
+        // Trimmed to 5 items (removed "Door & Trim" for space). Add/replace image paths later.
+        const items = [
+          { label: "🛠️ Repairs & Maintenance", img: "/assets/specialties/repairs.jpg",    href: "/services#repairs" },
+          { label: "💡 Electrical & Plumbing",  img: "/assets/specialties/electrical.jpg", href: "/services#electrical" },
+          { label: "🛁 Kitchen & Bath",         img: "/assets/specialties/kitchen.jpg",    href: "/services#kitchen-bath" },
+          { label: "🧰 Assembly & Install",     img: "/assets/specialties/assembly.jpg",   href: "/services#assembly" },
+          { label: "🎨 Painting & Drywall",     img: "/assets/specialties/painting.jpg",   href: "/services#painting" },
+        ];
+
+        return (
+          <ul
+            className="
+              mt-6
+              flex gap-5 px-1 py-2 overflow-x-auto snap-x snap-mandatory
+              [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden
+              sm:grid sm:grid-cols-5 sm:gap-6 sm:overflow-visible sm:px-0
+              place-items-center
+            "
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            {items.map(({ label, img, href }) => (
+              <li key={label} className="snap-center shrink-0 sm:shrink">
+                <a
+                  href={href}
+                  className="
+                    group relative flex aspect-square w-28 sm:w-32 items-center justify-center
+                    overflow-hidden rounded-full
+                    border border-white/15 ring-1 ring-white/10 bg-white/10 backdrop-blur-md
+                    shadow-[0_10px_30px_rgba(2,6,23,0.35)]
+                    transition-transform hover:-translate-y-0.5 hover:ring-2 hover:ring-accent/60
+                  "
+                  style={{
+                    backgroundImage: `url('${img}')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                  aria-label={label.replace(/^[^\s]+\s/, "")}
+                >
+                  {/* blue glass overlay for readability */}
+                  <span className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-slate-950/30 to-slate-950/65 group-hover:from-blue-700/20 group-hover:to-slate-950/75" />
+
+                  {/* soft highlight on hover */}
+                  <span
+                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
+                    style={{
+                      background:
+                        "radial-gradient(60% 60% at 50% 40%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%)",
+                    }}
+                  />
+
+                  {/* label on top of the image */}
+                  <span className="relative z-10 px-3 text-center text-xs sm:text-sm font-semibold leading-tight drop-shadow [text-shadow:0_1px_2px_rgba(0,0,0,.55)]">
+                    {label}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        );
+      })()}
     </div>
+  </div>
+</section>
+
+
+
+
+        {/* Services */}
+        <section id="services" className="section scroll-mt-24">
+          <div className="container-md">
+            <div className="surface-deep p-8 text-white sm:p-10">
+              <div className="flex flex-col items-center gap-1 sm:flex-row sm:justify-between">
+                <h2 className="text-2xl font-bold sm:text-3xl">Services at a Glance</h2>
+                <p className="text-sm text-white/80">Most requested tasks. Tap to book or inquire.</p>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {/* Card 1 */}
+                <div className="group rounded-xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <h3 className="text-lg font-semibold">🛠️ General Repairs</h3>
+                  <p className="mt-1 text-sm text-white/85">Drywall, doors, fixtures, and more—done right.</p>
+                  <div className="mt-4 flex justify-center gap-2">
+                    <button onClick={() => window.HCPWidget?.openModal()} aria-label="Book General Repairs" className="btn btn-primary-glass btn-shine">
+                      Book
+                    </button>
+                    <a href="/#contact" className="btn btn-ghost-glass">
+                      Inquire
+                    </a>
+                  </div>
+                </div>
+
+                {/* Card 2 */}
+                <div className="group rounded-xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <h3 className="text-lg font-semibold">💡 Lighting & Electrical</h3>
+                  <p className="mt-1 text-sm text-white/85">Installations and minor repairs—safe & tidy.</p>
+                  <div className="mt-4 flex justify-center gap-2">
+                    <button onClick={() => window.HCPWidget?.openModal()} aria-label="Book Lighting & Electrical" className="btn btn-primary-glass btn-shine">
+                      Book
+                    </button>
+                    <a href="/#contact" className="btn btn-ghost-glass">
+                      Inquire
+                    </a>
+                  </div>
+                </div>
+
+                {/* Card 3 */}
+                <div className="group rounded-xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <h3 className="text-lg font-semibold">🚰 Plumbing Fixes</h3>
+                  <p className="mt-1 text-sm text-white/85">Leaky faucets, disposals, toilets, P-traps.</p>
+                  <div className="mt-4 flex justify-center gap-2">
+                    <button onClick={() => window.HCPWidget?.openModal()} aria-label="Book Plumbing Fixes" className="btn btn-primary-glass btn-shine">
+                      Book
+                    </button>
+                    <a href="/#contact" className="btn btn-ghost-glass">
+                      Inquire
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 text-center">
+                <a href="/services" className="text-sm underline text-white/80 hover:text-white">
+                  See all services →
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Blog (Home) */}
+        <section id="blog" className="section scroll-mt-24">
+          <div className="container-md">
+            <div className="surface-light p-8 sm:p-10">
+              <div className="text-center">
+                <p className="badge-glass bg-white/80 text-blue-800/90 ring-blue-200/60">Handyman Tips &amp; Updates</p>
+                <h2 className="mt-2 text-2xl font-bold text-blue-900 sm:text-3xl">Blog</h2>
+                <p className="mt-2 text-slate-800">Quick DIY tips, seasonal maintenance, and service updates from the field.</p>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                <a
+                  href="/blog/tools"
+                  className="group block rounded-xl border border-blue-200/50 bg-white/90 p-6 ring-1 ring-blue-200/50 shadow-sm backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow"
+                >
+                  <h3 className="text-lg font-semibold text-blue-800">🧰 5 Tools Every Homeowner Should Own</h3>
+                  <p className="mt-1 text-sm text-slate-700">Build a basic kit for quick fixes and emergencies.</p>
+                  <span className="mt-3 inline-block text-sm text-blue-700 group-hover:underline">Read more →</span>
+                </a>
+
+                <a
+                  href="/blog/summer"
+                  className="group block rounded-xl border border-blue-200/50 bg-white/90 p-6 ring-1 ring-blue-200/50 shadow-sm backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow"
+                >
+                  <h3 className="text-lg font-semibold text-blue-800">☀️ Prep Your Home for Summer</h3>
+                  <p className="mt-1 text-sm text-slate-700">Simple steps to keep things cool and efficient.</p>
+                  <span className="mt-3 inline-block text-sm text-blue-700 group-hover:underline">Read more →</span>
+                </a>
+
+                <a
+                  href="/blog/seasonal"
+                  className="group block rounded-xl border border-blue-200/50 bg-white/90 p-6 ring-1 ring-blue-200/50 shadow-sm backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow"
+                >
+                  <h3 className="text-lg font-semibold text-blue-800">🛠️ Seasonal Maintenance Checklist</h3>
+                  <p className="mt-1 text-sm text-slate-700">Stay ahead of wear &amp; tear with this quick list.</p>
+                  <span className="mt-3 inline-block text-sm text-blue-700 group-hover:underline">Read more →</span>
+                </a>
+              </div>
+
+              <div className="mt-6 text-center">
+                <a href="/blog" className="btn btn-primary-glass btn-shine">
+                  📚 View All Posts
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact (shared component) */}
+       {/* Contact (shared component) */}
+{/* Contact (home) */}
+<section id="contact" className="scroll-mt-24">
+  <div
+    className="
+      mx-auto max-w-3xl
+      rounded-2xl border border-white/15 ring-1 ring-white/15
+      bg-gradient-to-br from-blue-950/80 via-blue-900/70 to-indigo-900/70
+      text-white backdrop-blur-xl backdrop-saturate-150
+      shadow-[0_20px_60px_-20px_rgba(2,6,23,0.6)]
+      p-6 sm:p-8
+    "
+  >
+    <h2 className="text-2xl sm:text-3xl font-bold">Contact</h2>
+    <p className="mt-2 text-white/90">
+      Tell me about your project and preferred time.
+    </p>
+
+    <div className="mt-4">
+      <ContactForm plain /> {/* use plain so the form doesn't render its inner card */}
+    </div>
+
+    <p className="mt-6 text-sm text-white/80">
+      Or call:{" "}
+      <a href="tel:+1-702-555-1234" className="underline hover:text-white">
+        (702) 555-1234
+      </a>
+    </p>
+  </div>
+</section>
+
+
+
+
+
+      </main>
+
+      {/* Mobile FAB */}
+      <div
+        className={[
+          "fixed bottom-4 right-4 z-50 flex flex-col gap-3 md:hidden transition-all duration-500",
+          fabVisible ? "visible opacity-100 translate-y-0" : "invisible opacity-0 translate-y-10",
+        ].join(" ")}
+      >
+        <a
+          href="tel:+1-702-555-1234"
+          aria-label="Call Now"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-md"
+        >
+          📞
+        </a>
+        <button
+          onClick={() => window.HCPWidget?.openModal()}
+          aria-label="Book Now"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-blue-700 ring-1 ring-gray-300 shadow"
+        >
+          📅
+        </button>
+      </div>
+    </>
   );
 }
