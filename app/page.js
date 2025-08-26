@@ -1,18 +1,27 @@
 // app/page.js
 import Script from "next/script";
 import ContactForm from "../components/ContactForm";        // keep relative import
-import HomeBlogSection from "../components/HomeBlogSection"; // server component (async)
+import HomeBlogSection from "../components/HomeBlogSection"; // server component (no "use client")
 
-// Optional: page-level metadata (you can keep your layout metadata if you prefer)
 export const metadata = {
-  title: "Mike’s PRO Handyman — Las Vegas",
+  title: "Handyman in Las Vegas — Repairs, Installs & Maintenance",
   description:
-    "Las Vegas Handyman — electrical, plumbing, drywall, doors & fixtures. Fast online booking with instant confirmation.",
+    "Mike’s PRO Handyman offers reliable repairs, smart upgrades, and seasonal maintenance in Las Vegas. Fast scheduling and honest pricing.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Handyman in Las Vegas — Repairs, Installs & Maintenance",
+    description:
+      "Reliable handyman services in Las Vegas. Small fixes to bigger projects—done right the first time.",
+    images: [{ url: "/og-default.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function Home() {
   return (
     <>
+      {/* …KEEP your existing sections/markup here… */}
+
       {/* Housecall Pro booking script (remove if already included in app/layout.js) */}
       <Script
         src="https://online-booking.housecallpro.com/script.js?token=d4e1ed98b32f451292eb26a710d891f0&orgName=Mikes-Pro-Handyman-service"
