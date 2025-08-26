@@ -1,26 +1,55 @@
-"use client";
-
-import { useEffect, useState } from "react";
+// app/page.js
 import Script from "next/script";
-import ContactForm from "../components/ContactForm"; // change to "@/components/ContactForm" only if your jsconfig/tsconfig paths are set
+import ContactForm from "../components/ContactForm";        // keep relative import
+import HomeBlogSection from "../components/HomeBlogSection"; // server component (async)
+
+// Optional: page-level metadata (you can keep your layout metadata if you prefer)
+export const metadata = {
+  title: "Mike’s PRO Handyman — Las Vegas",
+  description:
+    "Las Vegas Handyman — electrical, plumbing, drywall, doors & fixtures. Fast online booking with instant confirmation.",
+};
 
 export default function Home() {
-  const [fabVisible, setFabVisible] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setFabVisible(window.scrollY > 300);
-    window.addEventListener("scroll", onScroll);
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <>
-      {/* If you already load this in app/layout.js, remove this Script */}
+      {/* Housecall Pro booking script (remove if already included in app/layout.js) */}
       <Script
         src="https://online-booking.housecallpro.com/script.js?token=d4e1ed98b32f451292eb26a710d891f0&orgName=Mikes-Pro-Handyman-service"
         strategy="afterInteractive"
       />
+
+      {/* Tiny handler: any element with [data-hcp-open] opens the booking modal */}
+      <Script id="hcp-open-handler" strategy="afterInteractive">
+        {`
+          document.addEventListener('click', (e) => {
+            const trigger = e.target.closest('[data-hcp-open]');
+            if (!trigger) return;
+            e.preventDefault();
+            try { window.HCPWidget?.openModal?.(); } catch {}
+          });
+        `}
+      </Script>
+
+      {/* Tiny handler: show/hide mobile FAB when scrolling */}
+      <Script id="fab-scroll-handler" strategy="afterInteractive">
+        {`
+          const fab = document.getElementById('mobileFab');
+          if (fab) {
+            const toggle = () => {
+              if (window.scrollY > 300) {
+                fab.classList.add('visible','opacity-100','translate-y-0');
+                fab.classList.remove('invisible','opacity-0','translate-y-10');
+              } else {
+                fab.classList.add('invisible','opacity-0','translate-y-10');
+                fab.classList.remove('visible','opacity-100','translate-y-0');
+              }
+            };
+            window.addEventListener('scroll', toggle, { passive: true });
+            toggle();
+          }
+        `}
+      </Script>
 
       {/* Main */}
       <main className="mx-auto max-w-4xl space-y-10 px-4 py-10 text-center sm:space-y-12 sm:py-12">
@@ -42,7 +71,7 @@ export default function Home() {
 
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button
-              onClick={() => window.HCPWidget?.openModal()}
+              data-hcp-open
               aria-label="Open fast online booking"
               className="btn btn-primary-glass btn-shine"
             >
@@ -127,81 +156,63 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Specialties */}
-  {/* Specialties */}
-<section id="specialties" className="section scroll-mt-24">
-  <div className="container-md">
-    <div className="surface-deep p-8 sm:p-10 text-white">
-      <p className="badge-glass">Popular Services</p>
-      <h2 className="mt-2 text-2xl sm:text-3xl font-bold">Fixes, Installs & Upgrades — Done Right</h2>
-      <p className="mt-1 text-sm text-white/85">Swipe on mobile, tap to learn more.</p>
+        {/* Specialties (round icons row) */}
+        <section id="specialties" className="section scroll-mt-24">
+          <div className="container-md">
+            <div className="surface-deep p-8 sm:p-10 text-white">
+              <p className="badge-glass">Popular Services</p>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-bold">Fixes, Installs & Upgrades — Done Right</h2>
+              <p className="mt-1 text-sm text-white/85">Swipe on mobile, tap to learn more.</p>
 
-      {(() => {
-        // Trimmed to 5 items (removed "Door & Trim" for space). Add/replace image paths later.
-        const items = [
-          { label: "🛠️ Repairs & Maintenance", img: "/assets/specialties/repairs.jpg",    href: "/services#repairs" },
-          { label: "💡 Electrical & Plumbing",  img: "/assets/specialties/electrical.jpg", href: "/services#electrical" },
-          { label: "🛁 Kitchen & Bath",         img: "/assets/specialties/kitchen.jpg",    href: "/services#kitchen-bath" },
-          { label: "🧰 Assembly & Install",     img: "/assets/specialties/assembly.jpg",   href: "/services#assembly" },
-          { label: "🎨 Painting & Drywall",     img: "/assets/specialties/painting.jpg",   href: "/services#painting" },
-        ];
-
-        return (
-          <ul
-            className="
-              mt-6
-              flex gap-5 px-1 py-2 overflow-x-auto snap-x snap-mandatory
-              [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden
-              sm:grid sm:grid-cols-5 sm:gap-6 sm:overflow-visible sm:px-0
-              place-items-center
-            "
-          >
-            {items.map(({ label, img, href }) => (
-              <li key={label} className="snap-center shrink-0 sm:shrink">
-                <a
-                  href={href}
-                  className="
-                    group relative flex aspect-square w-28 sm:w-32 items-center justify-center
-                    overflow-hidden rounded-full
-                    border border-white/15 ring-1 ring-white/10 bg-white/10 backdrop-blur-md
-                    shadow-[0_10px_30px_rgba(2,6,23,0.35)]
-                    transition-transform hover:-translate-y-0.5 hover:ring-2 hover:ring-accent/60
-                  "
-                  style={{
-                    backgroundImage: `url('${img}')`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                  aria-label={label.replace(/^[^\s]+\s/, "")}
-                >
-                  {/* blue glass overlay for readability */}
-                  <span className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-slate-950/30 to-slate-950/65 group-hover:from-blue-700/20 group-hover:to-slate-950/75" />
-
-                  {/* soft highlight on hover */}
-                  <span
-                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-                    style={{
-                      background:
-                        "radial-gradient(60% 60% at 50% 40%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%)",
-                    }}
-                  />
-
-                  {/* label on top of the image */}
-                  <span className="relative z-10 px-3 text-center text-xs sm:text-sm font-semibold leading-tight drop-shadow [text-shadow:0_1px_2px_rgba(0,0,0,.55)]">
-                    {label}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        );
-      })()}
-    </div>
-  </div>
-</section>
-
-
-
+              {(() => {
+                const items = [
+                  { label: "🛠️ Repairs & Maintenance", img: "/assets/specialties/repairs.jpg",    href: "/services#repairs" },
+                  { label: "💡 Electrical & Plumbing",  img: "/assets/specialties/electrical.jpg", href: "/services#electrical" },
+                  { label: "🛁 Kitchen & Bath",         img: "/assets/specialties/kitchen.jpg",    href: "/services#kitchen-bath" },
+                  { label: "🧰 Assembly & Install",     img: "/assets/specialties/assembly.jpg",   href: "/services#assembly" },
+                  { label: "🎨 Painting & Drywall",     img: "/assets/specialties/painting.jpg",   href: "/services#painting" },
+                ];
+                return (
+                  <ul
+                    className="
+                      mt-6
+                      flex gap-5 px-1 py-2 overflow-x-auto snap-x snap-mandatory
+                      [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden
+                      sm:grid sm:grid-cols-5 sm:gap-6 sm:overflow-visible sm:px-0
+                      place-items-center
+                    "
+                  >
+                    {items.map(({ label, img, href }) => (
+                      <li key={label} className="snap-center shrink-0 sm:shrink">
+                        <a
+                          href={href}
+                          className="
+                            group relative flex aspect-square w-28 sm:w-32 items-center justify-center
+                            overflow-hidden rounded-full
+                            border border-white/15 ring-1 ring-white/10 bg-white/10 backdrop-blur-md
+                            shadow-[0_10px_30px_rgba(2,6,23,0.35)]
+                            transition-transform hover:-translate-y-0.5 hover:ring-2 hover:ring-accent/60
+                          "
+                          style={{ backgroundImage: `url('${img}')`, backgroundSize: "cover", backgroundPosition: "center" }}
+                          aria-label={label.replace(/^[^\\s]+\\s/, "")}
+                        >
+                          <span className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-slate-950/30 to-slate-950/65 group-hover:from-blue-700/20 group-hover:to-slate-950/75" />
+                          <span
+                            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
+                            style={{ background: "radial-gradient(60% 60% at 50% 40%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%)" }}
+                          />
+                          <span className="relative z-10 px-3 text-center text-xs sm:text-sm font-semibold leading-tight drop-shadow [text-shadow:0_1px_2px_rgba(0,0,0,.55)]">
+                            {label}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                );
+              })()}
+            </div>
+          </div>
+        </section>
 
         {/* Services */}
         <section id="services" className="section scroll-mt-24">
@@ -213,47 +224,24 @@ export default function Home() {
               </div>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                {/* Card 1 */}
-                <div className="group rounded-xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
-                  <h3 className="text-lg font-semibold">🛠️ General Repairs</h3>
-                  <p className="mt-1 text-sm text-white/85">Drywall, doors, fixtures, and more—done right.</p>
-                  <div className="mt-4 flex justify-center gap-2">
-                    <button onClick={() => window.HCPWidget?.openModal()} aria-label="Book General Repairs" className="btn btn-primary-glass btn-shine">
-                      Book
-                    </button>
-                    <a href="/#contact" className="btn btn-ghost-glass">
-                      Inquire
-                    </a>
+                {[
+                  { title: "🛠️ General Repairs", desc: "Drywall, doors, fixtures, and more—done right." },
+                  { title: "💡 Lighting & Electrical", desc: "Installations and minor repairs—safe & tidy." },
+                  { title: "🚰 Plumbing Fixes", desc: "Leaky faucets, disposals, toilets, P-traps." },
+                ].map((card) => (
+                  <div key={card.title} className="group rounded-2xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
+                    <h3 className="text-lg font-semibold">{card.title}</h3>
+                    <p className="mt-1 text-sm text-white/85">{card.desc}</p>
+                    <div className="mt-4 flex justify-center gap-2">
+                      <button data-hcp-open aria-label={`Book ${card.title}`} className="btn btn-primary-glass btn-shine">
+                        Book
+                      </button>
+                      <a href="/#contact" className="btn btn-ghost-glass">
+                        Inquire
+                      </a>
+                    </div>
                   </div>
-                </div>
-
-                {/* Card 2 */}
-                <div className="group rounded-xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
-                  <h3 className="text-lg font-semibold">💡 Lighting & Electrical</h3>
-                  <p className="mt-1 text-sm text-white/85">Installations and minor repairs—safe & tidy.</p>
-                  <div className="mt-4 flex justify-center gap-2">
-                    <button onClick={() => window.HCPWidget?.openModal()} aria-label="Book Lighting & Electrical" className="btn btn-primary-glass btn-shine">
-                      Book
-                    </button>
-                    <a href="/#contact" className="btn btn-ghost-glass">
-                      Inquire
-                    </a>
-                  </div>
-                </div>
-
-                {/* Card 3 */}
-                <div className="group rounded-xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
-                  <h3 className="text-lg font-semibold">🚰 Plumbing Fixes</h3>
-                  <p className="mt-1 text-sm text-white/85">Leaky faucets, disposals, toilets, P-traps.</p>
-                  <div className="mt-4 flex justify-center gap-2">
-                    <button onClick={() => window.HCPWidget?.openModal()} aria-label="Book Plumbing Fixes" className="btn btn-primary-glass btn-shine">
-                      Book
-                    </button>
-                    <a href="/#contact" className="btn btn-ghost-glass">
-                      Inquire
-                    </a>
-                  </div>
-                </div>
+                ))}
               </div>
 
               <div className="mt-6 text-center">
@@ -265,97 +253,44 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Blog (Home) */}
-        <section id="blog" className="section scroll-mt-24">
-          <div className="container-md">
-            <div className="surface-light p-8 sm:p-10">
-              <div className="text-center">
-                <p className="badge-glass bg-white/80 text-blue-800/90 ring-blue-200/60">Handyman Tips &amp; Updates</p>
-                <h2 className="mt-2 text-2xl font-bold text-blue-900 sm:text-3xl">Blog</h2>
-                <p className="mt-2 text-slate-800">Quick DIY tips, seasonal maintenance, and service updates from the field.</p>
-              </div>
+        {/* Blog (dynamic, styled to match) */}
+        <HomeBlogSection />
 
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                <a
-                  href="/blog/tools"
-                  className="group block rounded-xl border border-blue-200/50 bg-white/90 p-6 ring-1 ring-blue-200/50 shadow-sm backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow"
-                >
-                  <h3 className="text-lg font-semibold text-blue-800">🧰 5 Tools Every Homeowner Should Own</h3>
-                  <p className="mt-1 text-sm text-slate-700">Build a basic kit for quick fixes and emergencies.</p>
-                  <span className="mt-3 inline-block text-sm text-blue-700 group-hover:underline">Read more →</span>
-                </a>
+        {/* Contact (home) */}
+        <section id="contact" className="scroll-mt-24">
+          <div
+            className="
+              mx-auto max-w-3xl
+              rounded-2xl border border-white/15 ring-1 ring-white/15
+              bg-gradient-to-br from-blue-950/80 via-blue-900/70 to-indigo-900/70
+              text-white backdrop-blur-xl backdrop-saturate-150
+              shadow-[0_20px_60px_-20px_rgba(2,6,23,0.6)]
+              p-6 sm:p-8
+            "
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold">Contact</h2>
+            <p className="mt-2 text-white/90">Tell me about your project and preferred time.</p>
 
-                <a
-                  href="/blog/summer"
-                  className="group block rounded-xl border border-blue-200/50 bg-white/90 p-6 ring-1 ring-blue-200/50 shadow-sm backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow"
-                >
-                  <h3 className="text-lg font-semibold text-blue-800">☀️ Prep Your Home for Summer</h3>
-                  <p className="mt-1 text-sm text-slate-700">Simple steps to keep things cool and efficient.</p>
-                  <span className="mt-3 inline-block text-sm text-blue-700 group-hover:underline">Read more →</span>
-                </a>
-
-                <a
-                  href="/blog/seasonal"
-                  className="group block rounded-xl border border-blue-200/50 bg-white/90 p-6 ring-1 ring-blue-200/50 shadow-sm backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow"
-                >
-                  <h3 className="text-lg font-semibold text-blue-800">🛠️ Seasonal Maintenance Checklist</h3>
-                  <p className="mt-1 text-sm text-slate-700">Stay ahead of wear &amp; tear with this quick list.</p>
-                  <span className="mt-3 inline-block text-sm text-blue-700 group-hover:underline">Read more →</span>
-                </a>
-              </div>
-
-              <div className="mt-6 text-center">
-                <a href="/blog" className="btn btn-primary-glass btn-shine">
-                  📚 View All Posts
-                </a>
-              </div>
+            <div className="mt-4">
+              <ContactForm plain />
             </div>
+
+            <p className="mt-6 text-sm text-white/80">
+              Or call:{" "}
+              <a href="tel:+1-702-555-1234" className="underline hover:text-white">
+                (702) 555-1234
+              </a>
+            </p>
           </div>
         </section>
-
-        {/* Contact (shared component) */}
-       {/* Contact (shared component) */}
-{/* Contact (home) */}
-<section id="contact" className="scroll-mt-24">
-  <div
-    className="
-      mx-auto max-w-3xl
-      rounded-2xl border border-white/15 ring-1 ring-white/15
-      bg-gradient-to-br from-blue-950/80 via-blue-900/70 to-indigo-900/70
-      text-white backdrop-blur-xl backdrop-saturate-150
-      shadow-[0_20px_60px_-20px_rgba(2,6,23,0.6)]
-      p-6 sm:p-8
-    "
-  >
-    <h2 className="text-2xl sm:text-3xl font-bold">Contact</h2>
-    <p className="mt-2 text-white/90">
-      Tell me about your project and preferred time.
-    </p>
-
-    <div className="mt-4">
-      <ContactForm plain /> {/* use plain so the form doesn't render its inner card */}
-    </div>
-
-    <p className="mt-6 text-sm text-white/80">
-      Or call:{" "}
-      <a href="tel:+1-702-555-1234" className="underline hover:text-white">
-        (702) 555-1234
-      </a>
-    </p>
-  </div>
-</section>
-
-
-
-
-
       </main>
 
       {/* Mobile FAB */}
       <div
+        id="mobileFab"
         className={[
           "fixed bottom-4 right-4 z-50 flex flex-col gap-3 md:hidden transition-all duration-500",
-          fabVisible ? "visible opacity-100 translate-y-0" : "invisible opacity-0 translate-y-10",
+          "invisible opacity-0 translate-y-10", // toggled by the script above
         ].join(" ")}
       >
         <a
@@ -366,7 +301,7 @@ export default function Home() {
           📞
         </a>
         <button
-          onClick={() => window.HCPWidget?.openModal()}
+          data-hcp-open
           aria-label="Book Now"
           className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-blue-700 ring-1 ring-gray-300 shadow"
         >

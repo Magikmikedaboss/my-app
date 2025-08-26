@@ -1,63 +1,47 @@
 // app/api/contact/route.js
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+// Forward to your PHP endpoint on Bluehost (Titan SMTP lives behind this)
+const UPSTREAM = "https://mikesprohandyman.com/api/submit.php";
 
 export async function POST(req) {
   try {
-    const form = await req.formData();
-    const name = (form.get("name") || "").toString().trim();
-    const email = (form.get("email") || "").toString().trim();
-    const phone = (form.get("phone") || "").toString().trim();
-    const message = (form.get("message") || "").toString().trim();
+    const fd = await req.formData();
 
-    // Honeypot to block bots
-    const website = (form.get("website") || "").toString().trim();
-    if (website) {
-      // silently ignore bot submissions
+    // Honeypot: quiet success for bots
+    if ((fd.get("website") || "").toString().trim() !== "") {
       return NextResponse.json({ ok: true });
     }
 
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+    // Send as x-www-form-urlencoded (WAF-friendly)
+    const params = new URLSearchParams();
+    for (const [k, v] of fd.entries()) {
+      if (typeof v === "string") params.append(k, v);
     }
 
-    const subject = `New website lead from ${name}`;
-    const html = `
-      <div style="font-family:system-ui,Segoe UI,Roboto,Arial">
-        <h2>New Website Lead</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone || "—"}</p>
-        <p><strong>Message:</strong><br/>${message.replace(/\n/g, "<br/>")}</p>
-        <p style="color:#888;font-size:12px">TS: ${new Date().toISOString()}</p>
-      </div>
-    `;
-
-    // Send email to you
-    await resend.emails.send({
-      from: "Website Lead <noreply@yourdomain.com>",
-      to: process.env.CONTACT_TO,
-      reply_to: email, // so you can reply directly
-      subject,
-      html,
+    const upstream = await fetch(UPSTREAM, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        Accept: "application/json, text/plain, */*",
+      },
+      body: params.toString(),
+      cache: "no-store",
     });
 
-    // Optional: forward to Google Sheet webhook (if set)
-    if (process.env.LEADS_WEBHOOK_URL) {
-      // fire-and-forget; we don't block the response on this
-      fetch(process.env.LEADS_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, message, ts: Date.now() }),
-        cache: "no-store"
-      }).catch(() => {});
-    }
+    const text = await upstream.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { ok: upstream.ok, raw: text }; }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json(
+      { ...data, upstreamStatus: upstream.status },
+      { status: upstream.status || (upstream.ok ? 200 : 500) }
+    );
   } catch (err) {
-    console.error("Contact route error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    console.error("Proxy error /api/contact:", err);
+    return NextResponse.json({ ok: false, error: "Proxy failed" }, { status: 502 });
   }
 }
