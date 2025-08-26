@@ -125,7 +125,7 @@ export default async function BlogIndex() {
               <span className="text-base">🛠️</span> Handyman Tips &amp;
               Updates
             </span>
-            <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Blog</h1>
+            <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Mikes Pro Handyman Blog</h1>
             <p className="mt-2 text-white/85">
               Quick DIY tips, seasonal maintenance, and service updates.
             </p>
