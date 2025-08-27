@@ -1,4 +1,3 @@
-// app/blog/[slug]/page.js
 import { notFound } from "next/navigation";
 
 export const revalidate = 1800;

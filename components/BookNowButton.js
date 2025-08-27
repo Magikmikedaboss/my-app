@@ -1,4 +1,3 @@
-// components/BookNowButton.js
 "use client";
 
 export default function BookNowButton({ children = "📅 Book Online — 60s", className = "", ariaLabel = "Open fast online booking" }) {

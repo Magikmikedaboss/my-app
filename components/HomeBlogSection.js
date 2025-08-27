@@ -1,4 +1,3 @@
-// components/HomeBlogSection.js
 import { headers } from "next/headers";
 import BlogCardGrid from "@/components/BlogCardGrid";
 

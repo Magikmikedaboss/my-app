@@ -1,4 +1,3 @@
-// app/page.js
 import HomeBlogSection from "@/components/HomeBlogSection";
 
 export default function HomePage() {
