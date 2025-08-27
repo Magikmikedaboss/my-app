@@ -1,4 +1,3 @@
-// app/page.js
 import Script from "next/script";
 import ContactForm from "../components/ContactForm";        // keep relative import
 import HomeBlogSection from "../components/HomeBlogSection"; // server component (no "use client")

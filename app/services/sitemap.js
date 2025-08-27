@@ -1,4 +1,3 @@
-// app/sitemap.js
 export default async function sitemap() {
   const base = "https://mikesprohandyman.com";
   return [

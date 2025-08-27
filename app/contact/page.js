@@ -1,4 +1,3 @@
-// ❌ No "use client" here
 import ContactForm from "../../components/ContactForm.js"; 
 // If you don’t use the @ alias, use: import ContactForm from "../../components/ContactForm.jsx";
 

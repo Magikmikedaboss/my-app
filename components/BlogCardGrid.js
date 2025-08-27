@@ -1,4 +1,3 @@
-// components/BlogCardGrid.js
 import Link from "next/link";
 import SafeImage from "@/components/SafeImage";
 
