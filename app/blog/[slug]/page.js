@@ -1,175 +1,66 @@
 // app/blog/[slug]/page.js
 import { notFound } from "next/navigation";
 
-export const revalidate = 3600;
+export const revalidate = 1800;
 
-const BLOGGER = "https://fixitwithmikelasvegas.blogspot.com";
-const FEED = `${BLOGGER}/feeds/posts/default?alt=rss&max-results=150`;
+const BLOG_ID = process.env.BLOGGER_BLOG_ID;
+const KEY = process.env.BLOGGER_API_KEY;
 
-// --- tiny helpers ---
-const decode = (s = "") =>
-  s.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'");
-const pick = (str, re) => (str.match(re) || [,""])[1];
-function stripText(html=""){ return html.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim(); }
+const api = (path) =>
+  `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}${path}${path.includes("?") ? "&" : "?"}key=${KEY}`;
 
-// minimal HTML “sanitizer”: drop external-fetching tags, unsafe attrs; normalize image URLs
-function sanitize(html = "") {
-  // 1) Kill blocks that can pull resources or execute
-  html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
-  html = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
-  html = html.replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "");
-  html = html.replace(/<noscript[^>]*>[\s\S]*?<\/noscript>/gi, "");
-  // 2) Remove external resource tags entirely
-  html = html.replace(/<link[^>]*>/gi, "");
-  html = html.replace(/<meta[^>]*>/gi, "");
-  // 3) Remove inline event handlers & inline styles (background:url etc.)
-  html = html.replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, "");
-  html = html.replace(/\sstyle=(['"]).*?\1/gi, "");
-  // 4) If any stray @import text slipped out, nuke it
-  html = html.replace(/@import[^;]+;/gi, "");
-  // 5) Promote lazy image attributes to src
-  html = html.replace(
-    /<img([^>]*?)\s(?:data-src|data-original|data-lazy-src)=["']([^"']+)["']([^>]*)>/gi,
-    '<img$1 src="$2"$3>'
-  );
-  // 6) Normalize image src (protocol-relative & root-relative)
-  html = html.replace(/src=["']\/\/([^"']+)["']/gi, 'src="https://$1"');
-  html = html.replace(/src=["']\/([^"']+)["']/gi, (m, p1) => `src="${BLOGGER}/${p1}"`);
-  return html;
+function urlToSlug(u = "") {
+  try {
+    const last = new URL(u).pathname.split("/").filter(Boolean).pop() || "";
+    return decodeURIComponent(last.replace(/\.html?$/i, ""));
+  } catch { return ""; }
 }
 
-function parseEntries(xml) {
-  const blocks =
-    xml.match(/<item[\s\S]*?<\/item>/gi) ||
-    xml.match(/<entry[\s\S]*?<\/entry>/gi) ||
-    [];
-  return blocks.map((block) => {
-    let title = pick(block, /<title[^>]*>([\s\S]*?)<\/title>/i);
-    let link  = pick(block, /<link>([\s\S]*?)<\/link>/i);
-    if (!link) {
-      const m = block.match(/<link[^>]*rel=['"]alternate['"][^>]*href=['"]([^'"]+)['"][^>]*\/?>/i);
-      link = m ? m[1] : "";
-    }
-    let date  = pick(block, /<pubDate>([\s\S]*?)<\/pubDate>/i) || pick(block, /<updated>([\s\S]*?)<\/updated>/i);
-    // Prefer full content if available
-    let content =
-      pick(block, /<content:encoded[^>]*>([\s\S]*?)<\/content:encoded>/i) ||
-      pick(block, /<content[^>]*>([\s\S]*?)<\/content>/i) ||
-      pick(block, /<description>([\s\S]*?)<\/description>/i) ||
-      "";
-
-    title = decode(title.replace(/<!\[CDATA\[|\]\]>/g, "").trim());
-    content = decode(content.replace(/<!\[CDATA\[|\]\]>/g, ""));
-    const when = date ? new Date(date).toISOString() : null;
-
-    let slug = "post";
-    try {
-      const u = new URL(link);
-      const parts = u.pathname.split("/").filter(Boolean);
-      const last = parts[parts.length - 1] || "";
-      slug = decodeURIComponent(last.replace(/\.html?$/i, "")) || slug;
-    } catch {}
-
-    return { slug, title, link, date: when, content };
-  });
+function idFromFallbackSlug(slug = "") {
+  // supports our API fallback "post-<id>"
+  const m = slug.match(/^post-(\d+)$/);
+  return m ? m[1] : null;
 }
 
-async function getPost(slug) {
-  const res = await fetch(FEED, { next: { revalidate: 3600 } });
-  const xml = await res.text();
-  const entries = parseEntries(xml);
-  return entries.find((e) => e.slug === slug) || null;
+async function fetchById(id) {
+  if (!id) return null;
+  const r = await fetch(api(`/posts/${id}`), { cache: "no-store" });
+  if (!r.ok) return null;
+  return r.json();
 }
 
-export async function generateStaticParams() {
-  const res = await fetch(FEED, { cache: "no-store" });
-  const xml = await res.text();
-  const entries =
-    xml.match(/<item[\s\S]*?<\/item>/gi) ||
-    xml.match(/<entry[\s\S]*?<\/entry>/gi) ||
-    [];
-  const slugs = entries.map((block) => {
-    let link = (block.match(/<link>([\s\S]*?)<\/link>/i) || [,""])[1];
-    if (!link) {
-      const m = block.match(/<link[^>]*rel=['"]alternate['"][^>]*href=['"]([^'"]+)['"][^>]*\/?>/i);
-      link = m ? m[1] : "";
-    }
-    try {
-      const u = new URL(link);
-      const last = u.pathname.split("/").filter(Boolean).pop() || "post";
-      return decodeURIComponent(last.replace(/\.html?$/i, ""));
-    } catch {
-      return null;
-    }
-  }).filter(Boolean);
-  return slugs.slice(0, 50).map((slug) => ({ slug })); // prebuild some; others via ISR
+async function fetchBySlug(slug) {
+  const r = await fetch(api(`/posts?maxResults=100&orderBy=published`), { cache: "no-store" });
+  if (!r.ok) return null;
+  const data = await r.json();
+  return (data.items || []).find((it) => urlToSlug(it.url) === slug) || null;
 }
 
-export async function generateMetadata({ params }) {
-  const { slug } = await params;               // ✅ await params
-  const post = await getPost(slug);
-  if (!post) return {};
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "https://mikesprohandyman.com";
-  const url = `${base}/blog/${slug}`;
-  const desc = stripText(post.content).slice(0, 160);
-  return {
-    title: post.title,
-    description: desc,
-    alternates: { canonical: url },
-    openGraph: {
-      title: post.title,
-      description: stripText(post.content).slice(0, 200),
-      type: "article",
-      url,
-    },
-    twitter: { card: "summary_large_image", title: post.title, description: desc },
-  };
-}
+export default async function BlogPost({ params, searchParams }) {
+  if (!BLOG_ID || !KEY) {
+    return <div className="mx-auto max-w-3xl px-4 py-10 text-white/90">Missing API credentials.</div>;
+  }
 
-export default async function BlogPostPage({ params }) {
-  const { slug } = await params;               // ✅ await params
-  const post = await getPost(slug);
-  if (!post) return notFound();
+  // Prefer explicit ?id=; else derive id from slug like "post-<id>"; else search by slug
+  const idFromQuery = searchParams?.id || null;
+  const idFromSlug = idFromFallbackSlug(params.slug);
+  const item =
+    (idFromQuery && (await fetchById(idFromQuery))) ||
+    (idFromSlug && (await fetchById(idFromSlug))) ||
+    (await fetchBySlug(params.slug));
 
-  const safeHTML = sanitize(post.content);
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "https://mikesprohandyman.com";
+  if (!item) notFound();
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <article>
-        <header className="mb-6">
-          <h1 className="text-3xl font-extrabold text-blue-800">{post.title}</h1>
-          {post.date && (
-            <p className="mt-2 text-sm text-gray-600">
-              <time dateTime={post.date}>{new Date(post.date).toLocaleDateString()}</time>
-            </p>
-          )}
-          {/* JSON-LD */}
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "BlogPosting",
-                headline: post.title,
-                datePublished: post.date,
-                dateModified: post.date,
-                mainEntityOfPage: `${base}/blog/${slug}`, // ✅ use slug var
-              }),
-            }}
-          />
-        </header>
-
-        <div
-          className="
-            prose prose-slate sm:prose-lg max-w-none
-            prose-a:text-blue-700 hover:prose-a:underline
-            prose-img:rounded-xl prose-hr:border-slate-200
-            prose-blockquote:border-blue-300
-          "
-          dangerouslySetInnerHTML={{ __html: safeHTML }}
-        />
-      </article>
-    </main>
+    <article className="mx-auto max-w-3xl px-4 py-10">
+      <h1 className="text-3xl font-bold text-white">{item.title}</h1>
+      <div
+        className="prose prose-invert max-w-none mt-6
+                   prose-headings:text-white prose-a:text-blue-300 hover:prose-a:text-blue-200
+                   prose-img:rounded-xl prose-img:mx-auto prose-figcaption:text-white/70
+                   prose-hr:border-white/10"
+        dangerouslySetInnerHTML={{ __html: item.content || "" }}
+      />
+    </article>
   );
 }

@@ -5,9 +5,34 @@ import Header from "../components/Header.js";
 import Footer from "../components/Footer.jsx";
 import BackgroundCanvas from "../components/BackgroundCanvas.js";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://mikesprohandyman.com";
+
 export const metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Mike’s PRO Handyman",
   description: "Reliable handyman services in Las Vegas — repairs, installs, maintenance.",
+
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    title: "Mike’s PRO Handyman",
+    description: "Reliable handyman services in Las Vegas — repairs, installs, maintenance.",
+    images: [
+      {
+        url: "/og/handyman-home.jpg", // place this in /public/og/handyman-home.jpg
+        width: 1200,
+        height: 630,
+        alt: "Mike’s PRO Handyman",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Mike’s PRO Handyman",
+    description: "Reliable handyman services in Las Vegas — repairs, installs, maintenance.",
+    images: ["/og/handyman-home.jpg"],
+  },
 };
 
 // Fixes the viewport warning
@@ -20,7 +45,6 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
-      {/* Make the page a flex column so the footer sits at the bottom */}
       <body className="min-h-screen flex flex-col text-gray-900">
         {/* Background sits behind everything */}
         <BackgroundCanvas />
@@ -37,7 +61,7 @@ export default function RootLayout({ children }) {
           <main>{children}</main>
         </div>
 
-        {/* Site-wide footer (now visible) */}
+        {/* Site-wide footer */}
         <Footer />
       </body>
     </html>

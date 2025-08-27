@@ -175,11 +175,11 @@ export default function Home() {
 
               {(() => {
                 const items = [
-                  { label: "🛠️ Repairs & Maintenance", img: "/assets/specialties/repairs.jpg",    href: "/services#repairs" },
-                  { label: "💡 Electrical & Plumbing",  img: "/assets/specialties/electrical.jpg", href: "/services#electrical" },
-                  { label: "🛁 Kitchen & Bath",         img: "/assets/specialties/kitchen.jpg",    href: "/services#kitchen-bath" },
-                  { label: "🧰 Assembly & Install",     img: "/assets/specialties/assembly.jpg",   href: "/services#assembly" },
-                  { label: "🎨 Painting & Drywall",     img: "/assets/specialties/painting.jpg",   href: "/services#painting" },
+                  { label: "🛠️ Repairs & Maintenance", img: "/assets/specialties/beautiful-retro-edison-light-lamp-decor-light-lamp.jpg", href: "/services#repairs" },
+                  { label: "💡 Electrical & Plumbing",  img: "/assets/specialties/kitchen-sink-installation-plumbing.jpg", href: "/services#electrical" },
+                  { label: "🛁 Kitchen & Bath",         img: "/assets/specialties/farmhouse-kitchen-boasting-granite-countertops-Handyman-las vegas.jpg", href: "/services#kitchen-bath" },
+                  { label: "🧰 Assembly & Install",     img: "/assets/specialties/mike-pro-handyman-assembling-furniture.jpg",   href: "/services#assembly" },
+                  { label: "🎨 Painting & Drywall",     img: "/assets/specialties/handyman-painting-house-shape-on-wall-.jpg",   href: "/services#painting" },
                 ];
                 return (
                   <ul
