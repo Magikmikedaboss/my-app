@@ -5,9 +5,9 @@
 
 /* ---- Base tweaks (optional) ---- */
 @layer base {
-  html { @apply scroll-smooth; }
-  body { @apply min-h-screen text-gray-900; }
-}
+html[data-scroll-behavior='smooth'] { @apply scroll-smooth; }
+body { @apply min-h-screen text-gray-900; }
+ }
 
 /* ---- Components (your design system) ---- */
 @layer components {

@@ -118,8 +118,8 @@ export default function Home() {
             <h2 className="mt-2 text-2xl font-bold text-blue-900 sm:text-3xl">About Mike’s PRO Handyman</h2>
 
             <p className="mt-3 text-slate-800">
-              Licensed, insured handyman with <strong>25+ years across construction and technical trades</strong>—
-              electrical, plumbing, carpentry, and low-voltage/smart-home. Serving Las Vegas, Henderson, and Summerlin
+              Licensed, insured handyman with <strong>25+ years experience across construction and technical trades</strong>—
+              electrical, plumbing, carpentry, and low-voltage/smart-home . Serving Las Vegas, Henderson, and Summerlin
               with reliable workmanship and friendly service.
             </p>
 
@@ -224,74 +224,61 @@ export default function Home() {
         </section>
 
         {/* Services */}
-        <section id="services" className="section scroll-mt-24">
-          <div className="container-md">
-            <div className="surface-deep p-8 text-white sm:p-10">
-              <div className="flex flex-col items-center gap-1 sm:flex-row sm:justify-between">
-                <h2 className="text-2xl font-bold sm:text-3xl">Services at a Glance</h2>
-                <p className="text-sm text-white/80">Most requested tasks. Tap to book or inquire.</p>
-              </div>
+{/* Services */}
+{/* Services */}
+<section id="services" className="section scroll-mt-24">
+  <div className="container-md">
+    <div className="surface-deep isolate overflow-visible p-6 sm:p-10 text-white">
+      <div className="flex flex-col items-center gap-1 text-center sm:text-left sm:flex-row sm:justify-between">
+        <h2 className="text-2xl sm:text-3xl font-bold">Services at a Glance</h2>
+        <p className="text-sm text-white/80">Most requested tasks. Tap to book or inquire.</p>
+      </div>
 
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                {[
-                  { title: "🛠️ General Repairs", desc: "Drywall, doors, fixtures, and more—done right." },
-                  { title: "💡 Lighting & Electrical", desc: "Installations and minor repairs—safe & tidy." },
-                  { title: "🚰 Plumbing Fixes", desc: "Leaky faucets, disposals, toilets, P-traps." },
-                ].map((card) => (
-                  <div key={card.title} className="group rounded-2xl border border-white/15 bg-white/10 p-6 text-center shadow-sm ring-1 ring-white/10 backdrop-blur-md backdrop-saturate-150 transition hover:-translate-y-0.5 hover:shadow-lg">
-                    <h3 className="text-lg font-semibold">{card.title}</h3>
-                    <p className="mt-1 text-sm text-white/85">{card.desc}</p>
-                    <div className="mt-4 flex justify-center gap-2">
-                      <button data-hcp-open aria-label={`Book ${card.title}`} className="btn btn-primary-glass btn-shine">
-                        Book
-                      </button>
-                      <a href="/#contact" className="btn btn-ghost-glass">
-                        Inquire
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 text-center">
-                <a href="/services" className="text-sm underline text-white/80 hover:text-white">
-                  See all services →
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Blog (dynamic, styled to match) */}
-        <HomeBlogSection />
-
-        {/* Contact (home) */}
-        <section id="contact" className="scroll-mt-24">
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {[
+          { title: "🛠️ General Repairs", desc: "Honey-do lists, fixtures, minor carpentry & fixes—done right." },
+          { title: "🔐 Doors & Locks", desc: "Hinges, knobs, deadbolts, alignments, weatherstripping." },
+          { title: "🎨 Painting & Drywall", desc: "Patching, touch-ups, small rooms, trim & drywall repairs." },
+        ].map((card) => (
           <div
-            className="
-              mx-auto max-w-3xl
-              rounded-2xl border border-white/15 ring-1 ring-white/15
-              bg-gradient-to-br from-blue-950/80 via-blue-900/70 to-indigo-900/70
-              text-white backdrop-blur-xl backdrop-saturate-150
-              shadow-[0_20px_60px_-20px_rgba(2,6,23,0.6)]
-              p-6 sm:p-8
-            "
+            key={card.title}
+            className="min-w-0 w-full rounded-2xl border border-white/15 ring-1 ring-white/10
+                       bg-slate-900/70 md:bg-white/10
+                       p-5 sm:p-6 text-center shadow-md md:shadow-lg
+                       transition hover:-translate-y-0.5 hover:shadow-xl
+                       md:backdrop-blur-md md:backdrop-saturate-150"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold">Contact</h2>
-            <p className="mt-2 text-white/90">Tell me about your project and preferred time.</p>
+            <h3 className="text-lg font-semibold break-words">{card.title}</h3>
+            <p className="mt-1 text-sm text-white/85 break-words">{card.desc}</p>
 
-            <div className="mt-4">
-              <ContactForm plain />
-            </div>
-
-            <p className="mt-6 text-sm text-white/80">
-              Or call:{" "}
-              <a href="tel:+1-702-555-1234" className="underline hover:text-white">
-                (702) 555-1234
+            {/* CTAs: 1 column on mobile, 2 columns side-by-side on sm+ */}
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button
+                data-hcp-open
+                aria-label={`Book ${card.title}`}
+                className="btn btn-primary-glass btn-shine w-full"
+              >
+                Book
+              </button>
+              <a href="/#contact" className="btn btn-ghost-glass w-full">
+                Inquire
               </a>
-            </p>
+            </div>
           </div>
-        </section>
+        ))}
+      </div>
+
+      <div className="mt-6 text-center">
+        <a href="/services" className="text-sm underline text-white/80 hover:text-white">
+          See all services →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
       </main>
 
       {/* Mobile FAB */}
