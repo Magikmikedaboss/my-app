@@ -1,4 +1,3 @@
-// components/SafeImage.jsx
 "use client";
 import { useState } from "react";
 
