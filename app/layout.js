@@ -1,4 +1,3 @@
-// app/layout.js
 import "./globals.css";
 import Script from "next/script";
 import Header from "../components/Header.js";
