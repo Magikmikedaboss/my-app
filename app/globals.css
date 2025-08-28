@@ -115,3 +115,13 @@ body { @apply min-h-screen text-gray-900; }
          bg-white shadow-sm transition;
 }
 .card-solid:hover { @apply -translate-y-0.5 shadow; }
+
+/* Prevent big jumps for images rendered from Blogger HTML */
+.prose img{
+  display:block;
+  width:100%;
+  height:auto;
+  content-visibility:auto;
+  /* Reasonable default height so layout doesn't jump before load */
+  contain-intrinsic-size: 700px;
+}
