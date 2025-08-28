@@ -1,4 +1,3 @@
-// app/page.js
 import Link from "next/link";
 import Script from "next/script";
 import ContactForm from "../components/ContactForm";        // keep relative import (used in Contact section if you add it)

@@ -3,14 +3,17 @@ import Script from "next/script";
 import Header from "../components/Header.js";
 import Footer from "../components/Footer.jsx";
 import BackgroundCanvas from "../components/BackgroundCanvas.js";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://mikesprohandyman.com";
+// Use your live domain if the env is missing
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.mikesprohandyman.com";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Mike’s PRO Handyman",
   description: "Reliable handyman services in Las Vegas — repairs, installs, maintenance.",
-
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: SITE_URL,
@@ -18,14 +21,13 @@ export const metadata = {
     description: "Reliable handyman services in Las Vegas — repairs, installs, maintenance.",
     images: [
       {
-        url: "/og/handyman-home.jpg", // place this in /public/og/handyman-home.jpg
+        url: "/og/handyman-home.jpg", // ensure this file exists at /public/og/handyman-home.jpg
         width: 1200,
         height: 630,
         alt: "Mike’s PRO Handyman",
       },
     ],
   },
-
   twitter: {
     card: "summary_large_image",
     title: "Mike’s PRO Handyman",
@@ -34,7 +36,7 @@ export const metadata = {
   },
 };
 
-// Fixes the viewport warning
+// Viewport
 export const viewport = {
   width: "device-width",
   initialScale: 1,
@@ -43,12 +45,12 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" data-scroll-behavior="smooth" className="scroll-smooth">
       <body className="min-h-screen flex flex-col text-gray-900">
         {/* Background sits behind everything */}
         <BackgroundCanvas />
 
-        {/* Housecall Pro booking script */}
+        {/* Housecall Pro booking script (keep only here, remove duplicates on pages) */}
         <Script
           src="https://online-booking.housecallpro.com/script.js?token=d4e1ed98b32f451292eb26a710d891f0&orgName=Mikes-Pro-Handyman-service"
           strategy="afterInteractive"
@@ -62,6 +64,10 @@ export default function RootLayout({ children }) {
 
         {/* Site-wide footer */}
         <Footer />
+
+        {/* Real-user metrics (Web Vitals) */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
