@@ -1,5 +1,7 @@
+// app/page.js
+import Link from "next/link";
 import Script from "next/script";
-import ContactForm from "../components/ContactForm";        // keep relative import
+import ContactForm from "../components/ContactForm";        // keep relative import (used in Contact section if you add it)
 import HomeBlogSection from "../components/HomeBlogSection"; // server component (no "use client")
 
 export const metadata = {
@@ -19,8 +21,6 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-      {/* …KEEP your existing sections/markup here… */}
-
       {/* Housecall Pro booking script (remove if already included in app/layout.js) */}
       <Script
         src="https://online-booking.housecallpro.com/script.js?token=d4e1ed98b32f451292eb26a710d891f0&orgName=Mikes-Pro-Handyman-service"
@@ -85,9 +85,10 @@ export default function Home() {
             >
               📅 Book Online — 60s
             </button>
-            <a href="tel:+1-702-555-1234" className="btn btn-white-soft">
+            <a href="tel:+1-702-351-5020" className="btn btn-white-soft">
               📞 Call Now
             </a>
+            {/* Same-page anchor is fine as <a> */}
             <a href="#services" className="btn btn-ghost-glass">
               🛠️ View Services
             </a>
@@ -148,14 +149,14 @@ export default function Home() {
             </details>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <a
+              <Link
                 href="/contact"
                 className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3 font-medium text-white ring-1 ring-blue-300 transition hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow"
               >
                 📅 Get a Free Estimate
-              </a>
+              </Link>
               <a
-                href="tel:+1-702-555-1234"
+                href="tel:+1-702-351-5020"
                 className="inline-flex items-center justify-center rounded-full border border-blue-200 bg-white px-6 py-3 font-medium text-blue-700 ring-1 ring-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-50"
               >
                 📞 Call Now
@@ -192,7 +193,7 @@ export default function Home() {
                   >
                     {items.map(({ label, img, href }) => (
                       <li key={label} className="snap-center shrink-0 sm:shrink">
-                        <a
+                        <Link
                           href={href}
                           className="
                             group relative flex aspect-square w-28 sm:w-32 items-center justify-center
@@ -202,7 +203,7 @@ export default function Home() {
                             transition-transform hover:-translate-y-0.5 hover:ring-2 hover:ring-accent/60
                           "
                           style={{ backgroundImage: `url('${img}')`, backgroundSize: "cover", backgroundPosition: "center" }}
-                          aria-label={label.replace(/^[^\\s]+\\s/, "")}
+                          aria-label={label.replace(/^[^\s]+\s/, "")}
                         >
                           <span className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-slate-950/30 to-slate-950/65 group-hover:from-blue-700/20 group-hover:to-slate-950/75" />
                           <span
@@ -212,7 +213,7 @@ export default function Home() {
                           <span className="relative z-10 px-3 text-center text-xs sm:text-sm font-semibold leading-tight drop-shadow [text-shadow:0_1px_2px_rgba(0,0,0,.55)]">
                             {label}
                           </span>
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -223,61 +224,59 @@ export default function Home() {
         </section>
 
         {/* Services */}
-{/* Services */}
-{/* Services */}
-<section id="services" className="section scroll-mt-24">
-  <div className="container-md">
-    <div className="surface-deep isolate overflow-visible p-6 sm:p-10 text-white">
-      <div className="flex flex-col items-center gap-1 text-center sm:text-left sm:flex-row sm:justify-between">
-        <h2 className="text-2xl sm:text-3xl font-bold">Services at a Glance</h2>
-        <p className="text-sm text-white/80">Most requested tasks. Tap to book or inquire.</p>
-      </div>
+        <section id="services" className="section scroll-mt-24">
+          <div className="container-md">
+            <div className="surface-deep isolate overflow-visible p-6 sm:p-10 text-white">
+              <div className="flex flex-col items-center gap-1 text-center sm:text-left sm:flex-row sm:justify-between">
+                <h2 className="text-2xl sm:text-3xl font-bold">Services at a Glance</h2>
+                <p className="text-sm text-white/80">Most requested tasks. Tap to book or inquire.</p>
+              </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {[
-          { title: "🛠️ General Repairs", desc: "Honey-do lists, fixtures, minor carpentry & fixes—done right." },
-          { title: "🔐 Doors & Locks", desc: "Hinges, knobs, deadbolts, alignments, weatherstripping." },
-          { title: "🎨 Painting & Drywall", desc: "Patching, touch-ups, small rooms, trim & drywall repairs." },
-        ].map((card) => (
-          <div
-            key={card.title}
-            className="min-w-0 w-full rounded-2xl border border-white/15 ring-1 ring-white/10
-                       bg-slate-900/70 md:bg-white/10
-                       p-5 sm:p-6 text-center shadow-md md:shadow-lg
-                       transition hover:-translate-y-0.5 hover:shadow-xl
-                       md:backdrop-blur-md md:backdrop-saturate-150"
-          >
-            <h3 className="text-lg font-semibold break-words">{card.title}</h3>
-            <p className="mt-1 text-sm text-white/85 break-words">{card.desc}</p>
+              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {[
+                  { title: "🛠️ General Repairs", desc: "Honey-do lists, fixtures, minor carpentry & fixes—done right." },
+                  { title: "🔐 Doors & Locks", desc: "Hinges, knobs, deadbolts, alignments, weatherstripping." },
+                  { title: "🎨 Painting & Drywall", desc: "Patching, touch-ups, small rooms, trim & drywall repairs." },
+                ].map((card) => (
+                  <div
+                    key={card.title}
+                    className="min-w-0 w-full rounded-2xl border border-white/15 ring-1 ring-white/10
+                               bg-slate-900/70 md:bg-white/10
+                               p-5 sm:p-6 text-center shadow-md md:shadow-lg
+                               transition hover:-translate-y-0.5 hover:shadow-xl
+                               md:backdrop-blur-md md:backdrop-saturate-150"
+                  >
+                    <h3 className="text-lg font-semibold break-words">{card.title}</h3>
+                    <p className="mt-1 text-sm text-white/85 break-words">{card.desc}</p>
 
-            {/* CTAs: 1 column on mobile, 2 columns side-by-side on sm+ */}
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <button
-                data-hcp-open
-                aria-label={`Book ${card.title}`}
-                className="btn btn-primary-glass btn-shine w-full"
-              >
-                Book
-              </button>
-              <a href="/#contact" className="btn btn-ghost-glass w-full">
-                Inquire
-              </a>
+                    {/* CTAs: 1 col on mobile, 2 cols on sm+ */}
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <button
+                        data-hcp-open
+                        aria-label={`Book ${card.title}`}
+                        className="btn btn-primary-glass btn-shine w-full"
+                      >
+                        Book
+                      </button>
+                      <Link href="/#contact" className="btn btn-ghost-glass w-full">
+                        Inquire
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 text-center">
+                <Link href="/services" className="text-sm underline text-white/80 hover:text-white">
+                  See all services →
+                </Link>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+        </section>
 
-      <div className="mt-6 text-center">
-        <a href="/services" className="text-sm underline text-white/80 hover:text-white">
-          See all services →
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
+        {/* Blog (dynamic) */}
+        <HomeBlogSection />
       </main>
 
       {/* Mobile FAB */}
@@ -289,7 +288,7 @@ export default function Home() {
         ].join(" ")}
       >
         <a
-          href="tel:+1-702-555-1234"
+          href="tel:+1-702-351-5020"
           aria-label="Call Now"
           className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-md"
         >
