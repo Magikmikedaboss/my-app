@@ -36,7 +36,7 @@ export default function Footer() {
         <div>
           <h3 className="text-sm font-semibold text-white/90">Contact</h3>
           <ul className="mt-3 space-y-2 text-sm text-white/80">
-            <li><a href="tel:+17025551234">(702) 555-1234</a></li>
+            <li><a href="tel:+17023515020">(702) 351-5020</a></li>
             <li><a href="mailto:info@MikesProHandyman.com">info@MikesProHandyman.com</a></li>
             <li>Las Vegas • Henderson • Summerlin</li>
             <li className="text-xs text-white/60">Mon–Sat, 8am–6pm</li>

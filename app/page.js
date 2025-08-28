@@ -85,7 +85,7 @@ export default function Home() {
             >
               📅 Book Online — 60s
             </button>
-            <a href="tel:+1-702-555-1234" className="btn btn-white-soft">
+            <a href="tel:+1-702-351-5020" className="btn btn-white-soft">
               📞 Call Now
             </a>
             {/* Same-page anchor is fine as <a> */}
@@ -156,7 +156,7 @@ export default function Home() {
                 📅 Get a Free Estimate
               </Link>
               <a
-                href="tel:+1-702-555-1234"
+                href="tel:+1-702-351-5020"
                 className="inline-flex items-center justify-center rounded-full border border-blue-200 bg-white px-6 py-3 font-medium text-blue-700 ring-1 ring-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-50"
               >
                 📞 Call Now
@@ -288,7 +288,7 @@ export default function Home() {
         ].join(" ")}
       >
         <a
-          href="tel:+1-702-555-1234"
+          href="tel:+1-702-351-5020"
           aria-label="Call Now"
           className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-md"
         >
