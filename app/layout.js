@@ -1,13 +1,17 @@
+// app/layout.js
 import "./globals.css";
 import Script from "next/script";
+import { Suspense } from "react";
+
 import Header from "../components/Header.js";
 import Footer from "../components/Footer.jsx";
 import BackgroundCanvas from "../components/BackgroundCanvas.js";
+import GAListener from "../components/GAListener";
+
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import GAListener from "../components/GAListener"; // ⟵ add this
 
-// Use your live domain if the env is missing
+// Fallback to live domain if env is missing
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.mikesprohandyman.com";
 
@@ -51,7 +55,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className="scroll-smooth">
       <body className="min-h-screen flex flex-col text-gray-900">
-        {/* Google Analytics (GA4) — loads on every page */}
+        {/* Google Analytics (GA4) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-C0JNELJRWP"
           strategy="afterInteractive"
@@ -61,17 +65,16 @@ export default function RootLayout({ children }) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            // initial page load
             gtag('config', 'G-C0JNELJRWP', {
               page_path: window.location.pathname + window.location.search
             });
           `}
         </Script>
 
-        {/* Background sits behind everything */}
+        {/* Global background (behind everything) */}
         <BackgroundCanvas />
 
-        {/* Housecall Pro booking script (keep only here) */}
+        {/* Housecall Pro booking script */}
         <Script
           src="https://online-booking.housecallpro.com/script.js?token=d4e1ed98b32f451292eb26a710d891f0&orgName=Mikes-Pro-Handyman-service"
           strategy="afterInteractive"
@@ -79,17 +82,23 @@ export default function RootLayout({ children }) {
 
         {/* Content wrapper above the background */}
         <div className="relative z-10 flex-1">
-          <Header />
+          {/* If Header (or anything it imports) uses next/navigation hooks, keep it under Suspense */}
+          <Suspense fallback={null}>
+            <Header />
+          </Suspense>
+
           <main>{children}</main>
         </div>
 
         {/* Site-wide footer */}
         <Footer />
 
-        {/* SPA route-change tracking for GA4 */}
-        <GAListener gaId="G-C0JNELJRWP" />
+        {/* SPA route-change tracking for GA4 (uses usePathname/useSearchParams) */}
+        <Suspense fallback={null}>
+          <GAListener gaId="G-C0JNELJRWP" />
+        </Suspense>
 
-        {/* Real-user metrics (Web Vitals) */}
+        {/* Real-user metrics */}
         <Analytics />
         <SpeedInsights />
       </body>

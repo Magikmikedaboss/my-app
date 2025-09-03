@@ -1,8 +1,10 @@
+// components/GAListener.tsx (or .js)
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
+// Ensure TypeScript knows about gtag on window
 declare global {
   interface Window {
     gtag?: (...args: any[]) => void;
@@ -13,13 +15,17 @@ export default function GAListener({ gaId }: { gaId: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (!window.gtag || !gaId) return;
+  // Convert searchParams object into a stable string
+  const search = useMemo(() => searchParams?.toString() ?? "", [searchParams]);
 
-    // fire a page_view on route changes
-    const page_path = pathname + (searchParams?.toString() ? `?${searchParams}` : "");
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.gtag || !gaId) return;
+
+    const page_path = search ? `${pathname}?${search}` : pathname;
+
+    // Fire GA4 page_view on route changes
     window.gtag("config", gaId, { page_path });
-  }, [pathname, searchParams, gaId]);
+  }, [gaId, pathname, search]);
 
   return null;
 }
