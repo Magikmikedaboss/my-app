@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import BlogCardGrid from "@/components/BlogCardGrid";
+import BlogCardGrid from "../components/BlogCardGrid";
 
 export const revalidate = 1800;
 
